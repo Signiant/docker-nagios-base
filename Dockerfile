@@ -29,4 +29,40 @@ RUN yum install -y -q --enablerepo=rpmforge-extras `cat /tmp/repoforge-packages.
 RUN /usr/bin/curl -O https://bootstrap.pypa.io/get-pip.py
 RUN python get-pip.py
 
+# Now we can install Nagios
+
+ENV NAGIOS_VERSION 4.0.8
+ENV NAGIOS_PLUGINS_VERSION 2.0.3
+ENV NAGIOS_HOME /usr/local/nagios
+ENV NAGIOS_USER nagios
+ENV NAGIOS_GROUP nagios
+ENV NAGIOS_CMDUSER nagios
+ENV NAGIOS_CMDGROUP nagios
+ENV NAGIOSADMIN_USER nagiosadmin
+ENV NAGIOSADMIN_PASS nagios
+ENV APACHE_RUN_USER nagios
+ENV APACHE_RUN_GROUP nagios
+ENV NAGIOS_TIMEZONE UTC
+
+RUN ( egrep -i  "^${NAGIOS_GROUP}" /etc/group || groupadd $NAGIOS_GROUP ) && ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
+RUN ( id -u $NAGIOS_USER || useradd --system $NAGIOS_USER -g $NAGIOS_GROUP -d $NAGIOS_HOME ) && ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
+
+# Download Nagios and the plugins
+RUN wget http://downloads.sourceforge.net/project/nagios/nagios-4.x/nagios-$NAGIOS_VERSION/nagios-$NAGIOS_VERSION.tar.gz -O /tmp/nagios.tar.gz
+RUN wget http://nagios-plugins.org/download/nagios-plugins-$NAGIOS_PLUGINS_VERSION.tar.gz -O /tmp/nagios-plugins.tar.gz
+
+RUN cd /tmp && tar -zxvf nagios.tar.gz \
+    && cd nagios-$NAGIOS_VERSION \
+    && ./configure --prefix=${NAGIOS_HOME} --exec-prefix=${NAGIOS_HOME} --enable-event-broker --with-nagios-command-user=${NAGIOS_CMDUSER} --with-command-group=${NAGIOS_CMDGROUP} --with-nagios-user=${NAGIOS_USER} --with-nagios-group=${NAGIOS_GROUP} \
+    && make all \
+	&& make install \
+	&& make install-config \
+	&& make install-commandmode \
+	&& cp sample-config/httpd.conf /etc/httpd/conf.d/nagios.conf
+
+ADD ssl.conf /etc/httpd/conf.d/ssl.conf
+
+EXPOSE 443
+
+ADD start.sh /usr/local/bin/start_nagios
 

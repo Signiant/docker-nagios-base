@@ -3,6 +3,7 @@ gcc-c++
 make
 openssl
 openssl-devel
+mod_ssl
 python-devel
 libffi-devel
 libxslt-devel
@@ -14,3 +15,8 @@ passwd
 sudo
 dos2unix
 tar
+httpd
+httpd-tools
+php
+php-cli
+php-common
