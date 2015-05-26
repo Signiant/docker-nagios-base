@@ -5,4 +5,6 @@ if [ ! -f ${NAGIOS_HOME}/etc/htpasswd.users ] ; then
   chown -R nagios.nagios ${NAGIOS_HOME}/etc/htpasswd.users
 fi
 
-/usr/sbin/apachectl -D FOREGROUND
+/usr/sbin/apachectl -D FOREGROUND &
+exec ${NAGIOS_HOME}/bin/nagios ${NAGIOS_HOME}/etc/nagios.cfg
+

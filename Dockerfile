@@ -29,7 +29,7 @@ RUN yum install -y -q --enablerepo=rpmforge-extras `cat /tmp/repoforge-packages.
 RUN /usr/bin/curl -O https://bootstrap.pypa.io/get-pip.py
 RUN python get-pip.py
 
-# Now we can install Nagios
+# Now we can do our Nagios and Apache work
 
 ENV NAGIOS_VERSION 4.0.8
 ENV NAGIOS_PLUGINS_VERSION 2.0.3
@@ -46,6 +46,7 @@ ENV NAGIOS_TIMEZONE UTC
 
 RUN ( egrep -i  "^${NAGIOS_GROUP}" /etc/group || groupadd $NAGIOS_GROUP ) && ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
 RUN ( id -u $NAGIOS_USER || useradd --system $NAGIOS_USER -g $NAGIOS_GROUP -d $NAGIOS_HOME ) && ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
+RUN usermod -G $NAGIOS_CMDGROUP apache
 
 # Download Nagios and the plugins
 RUN wget http://downloads.sourceforge.net/project/nagios/nagios-4.x/nagios-$NAGIOS_VERSION/nagios-$NAGIOS_VERSION.tar.gz -O /tmp/nagios.tar.gz
@@ -60,6 +61,15 @@ RUN cd /tmp && tar -zxvf nagios.tar.gz \
 	&& make install-commandmode \
 	&& cp sample-config/httpd.conf /etc/httpd/conf.d/nagios.conf
 
+RUN cd /tmp && tar -zxvf nagios-plugins.tar.gz \
+    && cd nagios-plugins-$NAGIOS_PLUGINS_VERSION \
+	&& ./configure --prefix=${NAGIOS_HOME} --with-openssl=/usr/bin/openssl \
+	&& make \
+	&& make install
+	
+RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf	
+
+# Enable https for apache (mount the key and cert as a data volume)	
 ADD ssl.conf /etc/httpd/conf.d/ssl.conf
 
 EXPOSE 443
