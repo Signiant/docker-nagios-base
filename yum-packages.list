@@ -1,0 +1,16 @@
+gcc
+gcc-c++
+make
+openssl
+openssl-devel
+python-devel
+libffi-devel
+libxslt-devel
+libxml2-devel
+expat-devel
+perl
+perl-CPAN
+passwd
+sudo
+dos2unix
+tar
