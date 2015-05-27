@@ -65,7 +65,8 @@ RUN cd /tmp && tar -zxvf nagios-plugins.tar.gz \
     && cd nagios-plugins-$NAGIOS_PLUGINS_VERSION \
 	&& ./configure --prefix=${NAGIOS_HOME} --with-openssl=/usr/bin/openssl \
 	&& make \
-	&& make install
+	&& make install \
+	&& chown -R ${NAGIOS_USER}:${NAGIOS_GROUP} ${NAGIOS_HOME}/libexec
 	
 RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf	
 
