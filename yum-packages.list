@@ -20,3 +20,4 @@ httpd-tools
 php
 php-cli
 php-common
+bind-utils
