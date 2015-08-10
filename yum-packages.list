@@ -22,3 +22,5 @@ php-cli
 php-common
 bind-utils
 sysvinit-tools
+ssmtp
+mailx
