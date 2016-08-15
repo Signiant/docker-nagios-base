@@ -24,3 +24,5 @@ bind-utils
 sysvinit-tools
 ssmtp
 mailx
+jq
+git
