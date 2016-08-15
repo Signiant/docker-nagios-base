@@ -1,3 +1,6 @@
+jq
+git
+which
 gcc
 gcc-c++
 make
@@ -11,10 +14,8 @@ libxml2-devel
 expat-devel
 perl
 perl-CPAN
-passwd
 sudo
 dos2unix
-tar
 httpd
 httpd-tools
 php
@@ -24,5 +25,4 @@ bind-utils
 sysvinit-tools
 ssmtp
 mailx
-jq
-git
+
