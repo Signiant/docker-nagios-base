@@ -25,6 +25,8 @@ ENV NAGIOS_VERSION 4.2.0
 ENV NAGIOS_PLUGINS_VERSION 2.1.2
 ENV NAGIOS_HOME /usr/local/nagios
 ENV NAGIOS_USER nagios
+ENV NAGIOS_UID 1000
+ENV NAGIOS_GID 1000
 ENV NAGIOS_GROUP nagios
 ENV NAGIOS_CMDUSER nagios
 ENV NAGIOS_CMDGROUP nagios
@@ -34,8 +36,8 @@ ENV APACHE_RUN_USER nagios
 ENV APACHE_RUN_GROUP nagios
 ENV NAGIOS_TIMEZONE UTC
 
-RUN ( egrep -i  "^${NAGIOS_GROUP}" /etc/group || groupadd $NAGIOS_GROUP ) && ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
-RUN ( id -u $NAGIOS_USER || useradd --system $NAGIOS_USER -g $NAGIOS_GROUP -d $NAGIOS_HOME ) && ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
+RUN ( egrep -i  "^${NAGIOS_GROUP}" /etc/group || groupadd -g $NAGIOS_GID $NAGIOS_GROUP ) && ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd -g $NAGIOS_GID $NAGIOS_CMDGROUP )
+RUN ( id -u $NAGIOS_USER || useradd --system $NAGIOS_USER -u $NAGIOS_UID -g $NAGIOS_GROUP -d $NAGIOS_HOME ) && ( id -u $NAGIOS_CMDUSER || useradd --system -u $NAGIOS_UID -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
 RUN usermod -G $NAGIOS_CMDGROUP apache
 
 # Download Nagios and the plugins
