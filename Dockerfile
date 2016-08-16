@@ -21,8 +21,8 @@ RUN python get-pip.py
 
 # Now we can do our Nagios and Apache work
 
-ENV NAGIOS_VERSION 4.0.8
-ENV NAGIOS_PLUGINS_VERSION 2.0.3
+ENV NAGIOS_VERSION 4.2.0
+ENV NAGIOS_PLUGINS_VERSION 2.1.2
 ENV NAGIOS_HOME /usr/local/nagios
 ENV NAGIOS_USER nagios
 ENV NAGIOS_GROUP nagios
@@ -57,13 +57,12 @@ RUN cd /tmp && tar -zxvf nagios-plugins.tar.gz \
 	&& make \
 	&& make install \
 	&& chown -R ${NAGIOS_USER}:${NAGIOS_GROUP} ${NAGIOS_HOME}/libexec
-	
-RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf	
 
-# Enable https for apache (mount the key and cert as a data volume)	
+RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf
+
+# Enable https for apache (mount the key and cert as a data volume)
 ADD ssl.conf /etc/httpd/conf.d/ssl.conf
 
 EXPOSE 443
 
 ADD start.sh /usr/local/bin/start_nagios
-
