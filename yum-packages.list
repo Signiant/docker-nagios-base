@@ -1,6 +1,7 @@
 jq
 git
 which
+unzip
 gcc
 gcc-c++
 make
@@ -25,4 +26,3 @@ bind-utils
 sysvinit-tools
 ssmtp
 mailx
-
