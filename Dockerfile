@@ -64,6 +64,12 @@ RUN cd /tmp && tar -zxvf nagios-plugins.tar.gz \
   && cd /tmp \
   && rm -rf nagios-plugins-$NAGIOS_PLUGINS_VERSION
 
+# Update the NCPA check script
+RUN wget https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz -O /tmp/check_ncpa.tar.gz
+RUN cd /tmp && tar xvzf check_ncpa.tar.gz \
+    && chown ${NAGIOS_USER}:${NAGIOS_GROUP} check_ncpa.py \
+    && cp check_ncpa.py $NAGIOS_HOME/libexec
+
 RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf
 
 # Enable https for apache (mount the key and cert as a data volume)
