@@ -1,19 +1,17 @@
 FROM centos:centos7
 MAINTAINER devops@signiant.com
 
-# make sure we're running latest of everything
-RUN yum update -y
-
 # Install wget which we need later
-RUN yum install -y wget
-
-# Install EPEL
-RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+# && install EPEL
+RUN yum install -y wget \
+    && rpm -ivh https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/$(wget -q -O - https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/ | grep -o 'epel-release-[0-9]*\-[0-9]*\.noarch.rpm'| head -1)
 
 # Install a base set of packages from the default repo
 COPY yum-packages.list /tmp/yum-packages.list
-RUN chmod +r /tmp/yum-packages.list
-RUN yum install -y -q `cat /tmp/yum-packages.list`
+RUN chmod +r /tmp/yum-packages.list \
+    && yum install -y -q `cat /tmp/yum-packages.list` \
+    && yum update -y \
+    && yum clean all
 
 # Install PIP - useful everywhere
 RUN /usr/bin/curl -O https://bootstrap.pypa.io/get-pip.py
@@ -21,7 +19,7 @@ RUN python get-pip.py
 
 # Now we can do our Nagios and Apache work
 
-ENV NAGIOS_VERSION 4.2.0
+ENV NAGIOS_VERSION 4.4.1
 ENV NAGIOS_PLUGINS_VERSION 2.1.2
 ENV NAGIOS_HOME /usr/local/nagios
 ENV NAGIOS_USER nagios
@@ -51,14 +49,26 @@ RUN cd /tmp && tar -zxvf nagios.tar.gz \
 	&& make install \
 	&& make install-config \
 	&& make install-commandmode \
-	&& cp sample-config/httpd.conf /etc/httpd/conf.d/nagios.conf
+	&& cp sample-config/httpd.conf /etc/httpd/conf.d/nagios.conf \
+  && make clean \
+  && cd /tmp \
+  && rm -rf nagios-$NAGIOS_VERSION
 
 RUN cd /tmp && tar -zxvf nagios-plugins.tar.gz \
     && cd nagios-plugins-$NAGIOS_PLUGINS_VERSION \
 	&& ./configure --prefix=${NAGIOS_HOME} --with-openssl=/usr/bin/openssl \
 	&& make \
 	&& make install \
-	&& chown -R ${NAGIOS_USER}:${NAGIOS_GROUP} ${NAGIOS_HOME}/libexec
+	&& chown -R ${NAGIOS_USER}:${NAGIOS_GROUP} ${NAGIOS_HOME}/libexec \
+  && make clean \
+  && cd /tmp \
+  && rm -rf nagios-plugins-$NAGIOS_PLUGINS_VERSION
+
+# Update the NCPA check script
+RUN wget https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz -O /tmp/check_ncpa.tar.gz
+RUN cd /tmp && tar xvzf check_ncpa.tar.gz \
+    && chown ${NAGIOS_USER}:${NAGIOS_GROUP} check_ncpa.py \
+    && cp check_ncpa.py $NAGIOS_HOME/libexec
 
 RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf
 
