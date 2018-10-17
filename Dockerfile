@@ -72,13 +72,18 @@ RUN cd /tmp && tar xvzf check_ncpa.tar.gz \
 
 RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf
 
-# Enable https for apache (mount the key and cert as a data volume)
+# Enable https for apache
+# the key and cert must be mounted into the container
 ADD ssl.conf /etc/httpd/conf.d/ssl.conf
+
+# Add a config for port 80 so we can redirect 80 to 443
+ADD port80.conf /etc/httpd/conf.d/port80.conf
 
 # Replace index and redirect http to https
 COPY index.html /var/www/html/index.html
 COPY .htaccess /var/www/html/.htaccess
 
 EXPOSE 443
+EXPOSE 80
 
 ADD start.sh /usr/local/bin/start_nagios
