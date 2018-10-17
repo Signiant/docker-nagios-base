@@ -75,6 +75,9 @@ RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && ech
 # Enable https for apache (mount the key and cert as a data volume)
 ADD ssl.conf /etc/httpd/conf.d/ssl.conf
 
+# Add a redirect for the root URI
+COPY index.html /var/www/html/index.html
+
 EXPOSE 443
 
 ADD start.sh /usr/local/bin/start_nagios
