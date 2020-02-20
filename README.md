@@ -7,7 +7,7 @@ Run using a docker run command like:
 
 ````
 docker run -d -p 443:443 \
-	      -v /local/path/to/ssl/cert:/etc/pki/tls/certs/server.cert.crt \
+	      -v /local/path/to/ssl/cert:/etc/pki/tls/certs/server.crt \
 	      -v /local/path/to/ssl/key:/etc/pki/tls/private/server.key \
 	      -v /local/path/to/nagios.cfg:/usr/local/nagios/nagios.cfg \
 	      -v /local/path/to/nagios/configs:/usr/local/nagios/etc/objects \
