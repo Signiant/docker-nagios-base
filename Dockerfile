@@ -1,5 +1,5 @@
 FROM centos:centos7
-MAINTAINER devops@signiant.com
+MAINTAINER sre@signiant.com
 
 # Install wget which we need later
 # && install EPEL
@@ -19,8 +19,8 @@ RUN python get-pip.py
 
 # Now we can do our Nagios and Apache work
 
-ENV NAGIOS_VERSION 4.4.1
-ENV NAGIOS_PLUGINS_VERSION 2.1.2
+ENV NAGIOS_VERSION 4.4.6
+ENV NAGIOS_PLUGINS_VERSION 2.3.3
 ENV NAGIOS_HOME /usr/local/nagios
 ENV NAGIOS_USER nagios
 ENV NAGIOS_UID 1000
@@ -64,7 +64,7 @@ RUN cd /tmp && tar -zxvf nagios-plugins.tar.gz \
   && cd /tmp \
   && rm -rf nagios-plugins-$NAGIOS_PLUGINS_VERSION
 
-# Update the NCPA check script
+# Install the NCPA check script
 RUN wget https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz -O /tmp/check_ncpa.tar.gz
 RUN cd /tmp && tar xvzf check_ncpa.tar.gz \
     && chown ${NAGIOS_USER}:${NAGIOS_GROUP} check_ncpa.py \
