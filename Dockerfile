@@ -13,12 +13,7 @@ RUN chmod +r /tmp/yum-packages.list \
     && yum update -y \
     && yum clean all
 
-# Install PIP - useful everywhere
-RUN /usr/bin/curl -O https://bootstrap.pypa.io/get-pip.py
-RUN python get-pip.py
-
 # Now we can do our Nagios and Apache work
-
 ENV NAGIOS_VERSION 4.4.6
 ENV NAGIOS_PLUGINS_VERSION 2.3.3
 ENV NAGIOS_HOME /usr/local/nagios
