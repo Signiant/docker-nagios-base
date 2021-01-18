@@ -9,7 +9,7 @@ make
 openssl
 openssl-devel
 mod_ssl
-python-devel
+python3
 libffi-devel
 libxslt-devel
 libxml2-devel
