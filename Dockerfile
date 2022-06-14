@@ -1,5 +1,4 @@
 FROM centos:centos7
-MAINTAINER sre@signiant.com
 
 # Install wget which we need later
 # && install EPEL
@@ -14,8 +13,8 @@ RUN chmod +r /tmp/yum-packages.list \
     && yum clean all
 
 # Now we can do our Nagios and Apache work
-ENV NAGIOS_VERSION 4.4.6
-ENV NAGIOS_PLUGINS_VERSION 2.3.3
+ENV NAGIOS_VERSION 4.4.7
+ENV NAGIOS_PLUGINS_VERSION 2.4.0
 ENV NAGIOS_HOME /usr/local/nagios
 ENV NAGIOS_USER nagios
 ENV NAGIOS_UID 1000
@@ -34,8 +33,8 @@ RUN ( id -u $NAGIOS_USER || useradd --system $NAGIOS_USER -u $NAGIOS_UID -g $NAG
 RUN usermod -G $NAGIOS_CMDGROUP apache
 
 # Download Nagios and the plugins
-RUN wget http://downloads.sourceforge.net/project/nagios/nagios-4.x/nagios-$NAGIOS_VERSION/nagios-$NAGIOS_VERSION.tar.gz -O /tmp/nagios.tar.gz
-RUN wget http://nagios-plugins.org/download/nagios-plugins-$NAGIOS_PLUGINS_VERSION.tar.gz -O /tmp/nagios-plugins.tar.gz
+RUN wget https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-$NAGIOS_VERSION/nagios-$NAGIOS_VERSION.tar.gz -O /tmp/nagios.tar.gz
+RUN wget https://github.com/nagios-plugins/nagios-plugins/releases/download/release-$NAGIOS_PLUGINS_VERSION/nagios-plugins-$NAGIOS_PLUGINS_VERSION.tar.gz -O /tmp/nagios-plugins.tar.gz
 
 RUN cd /tmp && tar -zxvf nagios.tar.gz \
     && cd nagios-$NAGIOS_VERSION \
