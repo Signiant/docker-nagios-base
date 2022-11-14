@@ -4,12 +4,10 @@ gcc
 gd
 gd-devel
 gettext
-git
 glibc
 glibc-common
 httpd
 jq
-mailx
 make
 mod_ssl
 net-snmp
@@ -21,7 +19,6 @@ perl-Net-SNMP
 php
 postfix
 python3
-ssmtp
 unzip
 wget
 which

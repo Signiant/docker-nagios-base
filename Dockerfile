@@ -2,13 +2,13 @@ FROM centos:7
 
 # Install EPEL
 RUN yum install -y epel-release \
- && yum update -y
+ && yum upgrade -y
 
 # Install other packages
 COPY packages.list /tmp/packages.list
 RUN chmod +r /tmp/packages.list \
  && yum install -y -q $(cat /tmp/packages.list) \
- && yum update -y \
+ && yum upgrade -y \
  && yum autoremove -y \
  && yum clean all
 
@@ -26,7 +26,7 @@ ENV APACHE_RUN_USER nagios
 ENV APACHE_RUN_GROUP nagios
 ENV NAGIOS_TIMEZONE UTC
 
-# Download, build, and install Nagios Plugins
+# Download, build, and install Nagios Core
 RUN wget https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-$NAGIOS_VERSION/nagios-$NAGIOS_VERSION.tar.gz -O /tmp/nagios.tar.gz
 RUN cd /tmp && tar -zxvf nagios.tar.gz \
  && cd nagios-$NAGIOS_VERSION \
@@ -40,7 +40,7 @@ RUN cd /tmp && tar -zxvf nagios.tar.gz \
     --with-nagios-user=${NAGIOS_USER} \
  && make all \
  && make install-groups-users \
- && usermod -G $NAGIOS_CMDGROUP apache \
+ && usermod -G $NAGIOS_GROUP apache \
  && make install \
  && make install-config \
  && make install-commandmode \
@@ -56,8 +56,6 @@ RUN cd /tmp && tar -zxvf nagios-plugins.tar.gz \
  && cd nagios-plugins-$NAGIOS_PLUGINS_VERSION \
  && ./configure \
     --prefix=${NAGIOS_HOME} \
-    --with-command-group=${NAGIOS_CMDGROUP} \
-    --with-command-user=${NAGIOS_CMDUSER} \
     --with-nagios-group=${NAGIOS_GROUP} \
     --with-nagios-user=${NAGIOS_USER} \
     --with-openssl \
@@ -75,10 +73,8 @@ RUN cd /tmp && tar xvzf check_ncpa.tar.gz \
  && chown ${NAGIOS_USER}:${NAGIOS_GROUP} check_ncpa.py \
  && cp check_ncpa.py $NAGIOS_HOME/libexec
 
+# Set timezone
 RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf
-
-# Enable https for apache (mount the key and cert as a data volume)
-ADD ssl.conf /etc/httpd/conf.d/ssl.conf
 
 # Add a redirect for the root URI
 COPY index.html /var/www/html/index.html
