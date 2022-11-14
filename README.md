@@ -1,5 +1,6 @@
 # docker-nagios-base 
-Base image for Nagios 4.4.7 + Aapache2 (with SSL).  Based on CentOS7
+Base image for Nagios + Aapache2 (with SSL).
+https://support.nagios.com/kb/article/nagios-core-installing-nagios-core-from-source-96.html
 
 Base docker image for Nagios 4 + Apache2 with SSL enabled.  Mount the SSL cert into the docker container using a uservolume.
 
@@ -23,6 +24,6 @@ In the example above:
 - The nagios.cfg file allows you to override the default nagios config
 - the path to /etc/objects allows you to have your nagios configs on the local host and mounted into the container
 - the htpasswd file allows you to override the value for the user/password who can login to nagios
--- default is nagiosadmin/nagios
--- this must be a valid formatted htpasswd file (there are many generators out there)
+- default is nagiosadmin/nagios
+- this must be a valid formatted htpasswd file (there are many generators out there)
 
