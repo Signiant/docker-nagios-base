@@ -76,6 +76,9 @@ RUN cd /tmp && tar xvzf check_ncpa.tar.gz \
 # Set timezone
 RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/httpd/conf.d/nagios.conf
 
+# Enable https for Apache
+ADD ssl.conf /etc/httpd/conf.d/ssl.conf
+
 # Add a redirect for the root URI
 COPY index.html /var/www/html/index.html
 
