@@ -13,8 +13,8 @@ RUN chmod +r /tmp/packages.list \
  && yum clean all
 
 # Now we can do our Nagios and Apache work
-ENV NAGIOS_VERSION 4.4.8
-ENV NAGIOS_PLUGINS_VERSION 2.4.1
+ENV NAGIOS_VERSION 4.4.9
+ENV NAGIOS_PLUGINS_VERSION 2.4.2
 ENV NAGIOS_HOME /usr/local/nagios
 ENV NAGIOS_USER nagios
 ENV NAGIOS_GROUP nagios
