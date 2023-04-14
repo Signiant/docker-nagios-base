@@ -5,6 +5,11 @@ if [ ! -f ${NAGIOS_HOME}/etc/htpasswd.users ] ; then
   chown -R nagios.nagios ${NAGIOS_HOME}/etc/htpasswd.users
 fi
 
-/usr/sbin/apachectl -D FOREGROUND &
-exec ${NAGIOS_HOME}/bin/nagios ${NAGIOS_HOME}/etc/nagios.cfg
+# Fire up apache
+echo "Starting HTTPD"
+/usr/sbin/httpd -DFOREGROUND &
+/usr/sbin/php-fpm
 
+# Fire up nagios (blocking to keep the container up)
+echo "Starting Nagios"
+exec ${NAGIOS_HOME}/bin/nagios ${NAGIOS_HOME}/etc/nagios.cfg

@@ -1,20 +1,18 @@
 # docker-nagios-base 
-Base image for Nagios + Aapache2 (with SSL).
+Base image for Nagios and Apache HTTPD (with SSL).
 https://support.nagios.com/kb/article/nagios-core-installing-nagios-core-from-source-96.html
-
-Base docker image for Nagios 4 + Apache2 with SSL enabled.  Mount the SSL cert into the docker container using a uservolume.
 
 Run using a docker run command like:
 
 ````
 docker run -d -p 443:443 \
-	      -v /local/path/to/ssl/cert:/etc/pki/tls/certs/server.crt \
-	      -v /local/path/to/ssl/key:/etc/pki/tls/private/server.key \
-	      -v /local/path/to/nagios.cfg:/usr/local/nagios/nagios.cfg \
-	      -v /local/path/to/nagios/configs:/usr/local/nagios/etc/objects \
-	      -v /local/path/to/htpasswd:/usr/local/nagios/etc/htpasswd.users \
-              signiant/docker-nagios-base \
-	      /usr/local/bin/start_nagios
+    -v /local/path/to/ssl/cert:/etc/pki/tls/certs/localhost.crt \
+    -v /local/path/to/ssl/key:/etc/pki/tls/private/localhost.key \
+    -v /local/path/to/ssl/chain:/etc/pki/tls/certs/server-chain.crt \
+    -v /local/path/to/nagios.cfg:/usr/local/nagios/nagios.cfg \
+    -v /local/path/to/nagios/configs:/usr/local/nagios/etc/objects \
+    -v /local/path/to/htpasswd:/usr/local/nagios/etc/htpasswd.users \
+        signiant/docker-nagios-base
 
 ````
 
